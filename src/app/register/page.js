@@ -1,105 +1,106 @@
-"use client"
-import { Formik,Form,Field,ErrorMessage,FieldArray} from 'formik'
-import React from 'react'
-import * as yup from "yup";
-import axios from 'axios';
+'use client'
+import axios from "axios";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+// import { useRouter } from "next/router";
 import { useState } from "react";
+import * as Yup from 'yup'
 import { BASE_URL } from '@/utils/constant';
+export default function Users(){
 
+    // const router = useRouter()
+    const [isLoading, setIsLoading] = useState(true);
+    const [imageURL, setImageURL] = useState("");
 
-const FILE_SIZE = 1024 * 1024 * 10; // 10MB
-const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
+    const FILE_SIZE = 1024 * 1024 * 10; // 10MB
+    const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 
-export default function page() {
-  const validationSchema = yup.object({
-    title:yup.string().required("Title is required"),
-    description:yup.string().required("Description is required"),
-    price:yup.number().positive().integer().required("price is required"),
-    categoryId:yup.number().positive().integer(),
-//     images:yup.array().min(1, "At least one file is required").test("fileSize", "File too large", (value) => {
-//       console.log("value", value);
-//       if(!value){
-//           return true
-//       }
-//       return value.size <= FILE_SIZE;
-//   }).test("fileFormat", "Unsupported Format", (value) => {
-//       if(!value){
-//           return true
-//       }
-//       return SUPPORTED_FORMATS.includes(value.type);
-//   }).required("Required")
-  })
-//   const uploadImage = async (values) => {
-//     try {
-//         const response = await axios.post(
-//           `${BASE_URL}files/upload`,
-//           values.file
-//         );
-//         console.log(response);
-//         setIsLoading(false);
-//         return response.data.location;
-//       } catch (error) {
-//         console.log(error.message);
-//         alert(error.message)
-//       }
-// }
-
-const insertUser = async (data) => {
-    let {title, price, description, categoryId, images} = data
-    let myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    const userData = JSON.stringify({
-      title, price, description, categoryId, images
+    const validationSchema = Yup.object().shape({
+        title:Yup.string().required("Title is required"),
+        description:Yup.string().required("Description is required"),
+        price:Yup.number().positive().integer().required("price is required"),
+        categoryId:Yup.number().positive().integer(),
+        file: Yup.mixed().test("fileSize", "File too large", (value) => {
+            console.log("value", value);
+            if(!value){
+                return true
+            }
+            return value.size <= FILE_SIZE;
+        }).test("fileFormat", "Unsupported Format", (value) => {
+            if(!value){
+                return true
+            }
+            return SUPPORTED_FORMATS.includes(value.type);
+        }).required("Required")
     })
-
-    let requestData = {
-        method: "POST",
-        headers: myHeaders,
-        body: userData,
+    const uploadImage = async (values) => {
+        try {
+            const response = await axios.post(
+              `${BASE_URL}files/upload`,
+              values.file
+            );
+            console.log(response);
+            setIsLoading(false);
+            return response.data.location;
+          } catch (error) {
+            console.log(error.message);
+            alert(error.message)
+          }
     }
-    const resp= await fetch(`${BASE_URL}products`, requestData)
+
+    const insertUser = async (data) => {
+        let {title, price, description, categoryId, images} = data
+        let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        const userData = JSON.stringify({
+            title, price, description, categoryId, images
+        })
+    
+        let requestData = {
+            method:"POST",
+            headers: myHeaders,
+            body: userData,
+        }
+
+       const resp= await fetch(`https://api.escuelajs.co/api/v1/products`, requestData)
        return resp.json()
-  }
-// const postUser = (user) => {
-//     fetch("https://api.escuelajs.co/api/v1/products", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(user),
-//     })
-//       .then((resp) => resp.json())
-//       .then((res) => console.log(res));
-//   }
-  return (
-    <>
-      <Formik
+        // .then(res => res.json())
+        // .then(resp => {
+        //     console.log(resp)
+        //     setIsLoading(false)
+        //     // router.push("/")
+        // })
+        // .catch((error) => {
+        //     console.log("error create user", error.message)
+        // })
+    }
+    return(
+        <Formik
       initialValues={{
-        title:"", price:"", description:"", categoryId:"", images:["PHOTO-2023-05-16-11-26-36.jpg"]
+        title:"", price:"", description:"", categoryId:"", images:[]
       }}
       validationSchema={validationSchema}
        
       onSubmit={async (values, {setSubmitting}) => {
-                // const formData = new FormData();
-                // formData.append("files", values.file);
-                // const images = await uploadImage({file: formData});
-                // console.log("files", images );
-                // console.log(values.file)
-                // values.images  = images ;
+               const formData = new FormData();   
+                formData.append("file", values.file);
+                const avatar = await uploadImage({file: formData});
+                console.log("file", avatar);
+                console.log(values.file)
+                values.images  = [avatar];
 
                 setTimeout(() => {
                     alert(JSON.stringify(values, null, 2));
                     insertUser(values)
-                    .then(resp=>{
-                        alert("inser user success")
-                        console.log(resp)
-                    })
+                    // .then(resp=>{
+                    //     alert("inser user success")
+                    //     console.log(resp)
+                    // })
                     setSubmitting(false);
                   }, 1000);
       }}
       >
          {
-                ({values,isSubmitting}) => (
+                ({isSubmitting}) => (
                     <section className="bg-gray-50 dark:bg-gray-900 my-10 flex justify-center">
                         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                             <a href="/" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -165,22 +166,23 @@ const insertUser = async (data) => {
                                                         <svg aria-hidden="true" className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                                                         <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
                                                         <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-                                                    </div>                                                
-                                                    {/* <Field      
+                                                    </div>
+                                                    <Field 
                                                         id="dropzone-file" 
-                                                        name="images" 
+                                                        name="file" 
                                                         type="file" 
                                                         className="hidden"
                                                         component={DropFileZone}
-                                                    />  */}
+                                                    />
+                                                    
                                                 </label>
                                                 
                                             </div> 
-                                            {/* <ErrorMessage 
-                                                name="images"
+                                            <ErrorMessage 
+                                                name="file"
                                             >
                                                 {msg => <div className="text-red-600">{msg}</div>}
-                                            </ErrorMessage> */}
+                                            </ErrorMessage>
                                             
                                             <button 
                                                 disabled={isSubmitting}
@@ -196,35 +198,33 @@ const insertUser = async (data) => {
                     </section>
                 )
             }
-        </Formik>  
-    </>
-  )
+        </Formik>
+    )
 }
-// function DropFileZone({field, form}){
-//     const [previewImage, setPreviewImage] = useState(null);
-//     const handleChange = (event) => {
-//         const file = event.currentTarget.files[0];
-//         form.setFieldValue(field.name, file);
-//         setPreviewImage(URL.createObjectURL(file));
-//     }
-//     return(
-//         <> 
-//             <input
-//                 id="dropzone-file" 
-//                 type="file"
-//                 name="images"
-//                 onChange={handleChange}
-//                 className="hidden"
-//                 multiple
-//             />
-//             {previewImage && (
-//                 <img 
-//                     src={previewImage} 
-//                     alt="preview" 
-//                     className="mt-2 h-20 w-full" />
-//             )}
-//         </>
-//     )
-// }
 
-
+function DropFileZone({field, form}){
+    const [previewImage, setPreviewImage] = useState(null);
+    const handleChange = (event) => {
+        const file = event.currentTarget.files[0];
+        form.setFieldValue(field.name, file);
+        setPreviewImage(URL.createObjectURL(file));
+    }
+    return(
+        <> 
+            <input
+                id="dropzone-file" 
+                type="file"
+                name="file"
+                onChange={handleChange}
+                className="hidden"
+                multiple
+            />
+            {previewImage && (
+                <img 
+                    src={previewImage} 
+                    alt="preview" 
+                    className="mt-2 h-20 w-full" />
+            )}
+        </>
+    )
+}
