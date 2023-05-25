@@ -73,7 +73,6 @@ const insertUser = async (data) => {
 //   }
   return (
     <>
-      <h1>page</h1>
       <Formik
       initialValues={{
         title:"", price:"", description:"", categoryId:"", images:["PHOTO-2023-05-16-11-26-36.jpg"]
@@ -89,7 +88,7 @@ const insertUser = async (data) => {
                 // values.images  = images ;
 
                 setTimeout(() => {
-                    // alert(JSON.stringify(values, null, 2));
+                    alert(JSON.stringify(values, null, 2));
                     insertUser(values)
                     .then(resp=>{
                         alert("inser user success")
@@ -101,7 +100,7 @@ const insertUser = async (data) => {
       >
          {
                 ({values,isSubmitting}) => (
-                    <section className="bg-gray-50 dark:bg-gray-900">
+                    <section className="bg-gray-50 dark:bg-gray-900 my-10 flex justify-center">
                         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                             <a href="/" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                                 <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo" />
@@ -117,7 +116,7 @@ const insertUser = async (data) => {
                                         >
                                             <div>
                                                 <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
-                                                <Field type="text" name="title" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" />
+                                                <Field type="text" name="title" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" />
                                                 <ErrorMessage 
                                                     name="title"
                                                 >
@@ -126,7 +125,7 @@ const insertUser = async (data) => {
                                             </div>
                                             <div>
                                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                                                <Field type="number" name="price" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="" />
+                                                <Field type="number" name="price" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="price"  />
                                                 <ErrorMessage 
                                                     name="price"
                                                 >
@@ -136,15 +135,15 @@ const insertUser = async (data) => {
                                             </div>
                                             <div>
                                                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                                                <Field type="description" as="textarea" name="description" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" />
+                                                <Field type="description" as="textarea" name="description" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  />
                                                 <ErrorMessage 
-                                                    name="password"
+                                                    name="description"
                                                 >
                                                     {msg => <div className="text-red-600">{msg}</div>}
                                                 </ErrorMessage>
                                             </div>
                                             <div>
-                                                <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                                                <label htmlFor="categoryId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
                                                 <Field  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 as="select"
                                                 name="categoryId"

@@ -2,30 +2,33 @@ import Image from "next/image";
 import Product from "@/components/product";
 import User from "@/components/user";
 import Category from "@/components/category";
+import axios from "axios";
 export async function getProduct() {
-  const res = await fetch(
-    `https://api.escuelajs.co/api/v1/products?limit=20&offset=1`,
+  const res = await axios(
+    `https://fakestoreapi.com/products`,
     {cache:'no-store'}
   );
-  return res.json();
+  return res.data
 }
 export async function getUser() {
-  const res = await fetch(
-    `https://api.escuelajs.co/api/v1/users?limit=8`
+  const res = await axios(
+    `https://fakestoreapi.com/users`,
+    {cache:'no-store'}
   );
-  return res.json();
+  return res.data;
 }
 export async function getCategory() {
-  const res = await fetch(
-    `https://api.escuelajs.co/api/v1/categories?limit=10`
+  const res = await axios(
+    `https://fakestoreapi.com/products/categories`,
+    {cache:'no-store'}
   );
-  return res.json();
+  return res.data;
 }
 export default async function Home() {
   const products = await getProduct();
   const users = await getUser();
   const categories = await getCategory();
-  console.log(products);
+  console.log(categories);
 
   return (
     <>
@@ -36,7 +39,7 @@ export default async function Home() {
             id={product.id}
               key={index}
               title={product.title}
-              image={product.images[0]}
+              image={product.image}
               price={product.price}
               description={product.description}
             />
@@ -55,7 +58,7 @@ export default async function Home() {
             <div className="">
              {
               categories.map((category,index)=>(
-                <Category key={index} image={category.image} category={category.name}/>
+                <Category key={index} category={category}/>
               ))
              }
             </div>
@@ -67,8 +70,7 @@ export default async function Home() {
           {users.map((user, index) => (
             <User
               key={index}
-              image={user.avatar}
-              name={user.name}
+              name={user.username}
               email={user.email}
             />
           ))}
