@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 
+
 export default function Product({title,image,price,id,description}) {
   return (
     <>    
@@ -18,6 +19,7 @@ export default function Product({title,image,price,id,description}) {
     </div>
   </div>
 </div>
+
 
     </>
   )
